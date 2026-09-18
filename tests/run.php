@@ -22,7 +22,11 @@ function fitText(string $prefix, int $targetLength): string
     while (mb_strlen($text) < $targetLength) {
         $text .= $suffix;
     }
-    return mb_substr($text, 0, $targetLength);
+    $text = mb_substr($text, 0, $targetLength);
+    if (preg_match('/\s$/u', $text)) {
+        $text = mb_substr($text, 0, $targetLength - 1) . '.';
+    }
+    return $text;
 }
 
 $empty = SeoScoreCalculator::evaluate([
@@ -77,4 +81,3 @@ expectSame(35, $partial['score'], 'частично заполненный то�
 expectSame('critical', $partial['status']['code'], '35 баллов относится к критичному статусу');
 
 fwrite(STDOUT, "All tests passed.\n");
-

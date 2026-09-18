@@ -106,7 +106,11 @@ function fitPlainText(string $prefix, int $targetLength): string
     while (mb_strlen($text) < $targetLength) {
         $text .= $tail;
     }
-    return trim(mb_substr($text, 0, $targetLength));
+    $text = mb_substr($text, 0, $targetLength);
+    if (preg_match('/\s$/u', $text)) {
+        $text = mb_substr($text, 0, $targetLength - 1) . '.';
+    }
+    return $text;
 }
 
 function productDescription(string $name, int $targetLength): string
@@ -324,4 +328,3 @@ foreach ($products as $offset => [$name, $brand, $material, $country]) {
 
 BXClearCache(true, '/');
 output(sprintf('Готово. Инфоблок: %d, раздел: %d, товаров: %d.', $iblockId, $sectionId, count($products)));
-
