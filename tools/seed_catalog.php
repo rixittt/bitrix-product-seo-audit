@@ -48,9 +48,11 @@ function findProductIblock(): int
 
 function ensureProperty(int $iblockId, string $code, string $name, int $sort): int
 {
-    $existing = CIBlockProperty::GetList([], ['IBLOCK_ID' => $iblockId, '=CODE' => $code])->Fetch();
-    if ($existing) {
-        return (int)$existing['ID'];
+    $iterator = CIBlockProperty::GetList([], ['IBLOCK_ID' => $iblockId, 'CODE' => $code]);
+    while ($existing = $iterator->Fetch()) {
+        if (strtoupper((string)$existing['CODE']) === strtoupper($code)) {
+            return (int)$existing['ID'];
+        }
     }
 
     $property = new CIBlockProperty();
