@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../local/components/candidate/product.seo.audit/lib/SeoScoreCalculator.php';
+require_once __DIR__ . '/../tools/lib/CatalogDetailProperties.php';
 
+use Candidate\SeoAudit\CatalogDetailProperties;
 use Candidate\SeoAudit\SeoScoreCalculator;
 
 function expectSame($expected, $actual, string $message): void
@@ -79,5 +81,26 @@ $partial = SeoScoreCalculator::evaluate([
 ]);
 expectSame(35, $partial['score'], 'частично заполненный товар получает ожидаемую сумму');
 expectSame('critical', $partial['status']['code'], '35 баллов относится к критичному статусу');
+
+$catalogPage = <<<'PHP'
+        "DETAIL_PROPERTY_CODE" => array(
+                0 => "NEWPRODUCT",
+                1 => "MANUFACTURER",
+                2 => "MATERIAL",
+        ),
+        "DETAIL_META_KEYWORDS" => "KEYWORDS",
+PHP;
+$configuredCatalogPage = CatalogDetailProperties::withRequiredCodes(
+    $catalogPage,
+    ['BRAND', 'MATERIAL', 'COUNTRY']
+);
+expectSame(1, substr_count($configuredCatalogPage, '"BRAND"'), 'бренд добавляется в характеристики карточки');
+expectSame(1, substr_count($configuredCatalogPage, '"MATERIAL"'), 'существующий материал не дублируется');
+expectSame(1, substr_count($configuredCatalogPage, '"COUNTRY"'), 'страна добавляется в характеристики карточки');
+expectSame(
+    $configuredCatalogPage,
+    CatalogDetailProperties::withRequiredCodes($configuredCatalogPage, ['BRAND', 'MATERIAL', 'COUNTRY']),
+    'настройка карточки идемпотентна'
+);
 
 fwrite(STDOUT, "All tests passed.\n");

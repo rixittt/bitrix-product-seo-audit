@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 use Bitrix\Catalog\CatalogIblockTable;
 use Bitrix\Iblock\InheritedProperty\ElementValues;
+use Bitrix\Iblock\Model\PropertyFeature;
 use Bitrix\Main\Loader;
+
+require_once __DIR__ . '/lib/CatalogDetailProperties.php';
+
+use Candidate\SeoAudit\CatalogDetailProperties;
 
 $documentRoot = getenv('BITRIX_DOCUMENT_ROOT') ?: '/var/www/html';
 $_SERVER['DOCUMENT_ROOT'] = rtrim($documentRoot, '/');
@@ -51,7 +56,9 @@ function ensureProperty(int $iblockId, string $code, string $name, int $sort): i
     $iterator = CIBlockProperty::GetList([], ['IBLOCK_ID' => $iblockId, 'CODE' => $code]);
     while ($existing = $iterator->Fetch()) {
         if (strtoupper((string)$existing['CODE']) === strtoupper($code)) {
-            return (int)$existing['ID'];
+            $propertyId = (int)$existing['ID'];
+            ensurePropertyFeatures($propertyId);
+            return $propertyId;
         }
     }
 
@@ -70,7 +77,32 @@ function ensureProperty(int $iblockId, string $code, string $name, int $sort): i
         throw new RuntimeException(sprintf('Не удалось создать свойство %s: %s', $code, $property->LAST_ERROR));
     }
 
+    ensurePropertyFeatures((int)$propertyId);
     return (int)$propertyId;
+}
+
+function ensurePropertyFeatures(int $propertyId): void
+{
+    $result = PropertyFeature::updateFeatures($propertyId, [
+        [
+            'MODULE_ID' => 'iblock',
+            'FEATURE_ID' => 'DETAIL_PAGE_SHOW',
+            'IS_ENABLED' => 'Y',
+        ],
+        [
+            'MODULE_ID' => 'iblock',
+            'FEATURE_ID' => 'LIST_PAGE_SHOW',
+            'IS_ENABLED' => 'Y',
+        ],
+    ]);
+
+    if (!$result->isSuccess()) {
+        throw new RuntimeException(sprintf(
+            'Не удалось включить показ свойства %d: %s',
+            $propertyId,
+            implode('; ', $result->getErrorMessages())
+        ));
+    }
 }
 
 function ensureSection(int $iblockId): int
@@ -235,6 +267,14 @@ $iblockId = findProductIblock();
 ensureProperty($iblockId, 'BRAND', 'Бренд', 100);
 ensureProperty($iblockId, 'MATERIAL', 'Материал', 110);
 ensureProperty($iblockId, 'COUNTRY', 'Страна производства', 120);
+$catalogPage = $_SERVER['DOCUMENT_ROOT'] . '/catalog/index.php';
+$catalogPageUpdated = CatalogDetailProperties::updateFile(
+    $catalogPage,
+    ['BRAND', 'MATERIAL', 'COUNTRY']
+);
+output($catalogPageUpdated
+    ? 'Карточка товара настроена на вывод бренда, материала и страны производства.'
+    : 'Настройки характеристик карточки товара уже актуальны.');
 $sectionId = ensureSection($iblockId);
 $elementApi = new CIBlockElement();
 

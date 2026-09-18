@@ -77,6 +77,7 @@ $summary = $arResult['SUMMARY'];
                 <?php foreach ($arResult['ITEMS'] as $item):
                     $audit = $item['AUDIT'];
                     $blocks = $audit['blocks'];
+                    $characteristicDetails = $item['CHARACTERISTIC_DETAILS'] ?? [];
                     ?>
                     <tr>
                         <td data-label="Товар" class="seo-audit__product">
@@ -91,11 +92,18 @@ $summary = $arResult['SUMMARY'];
                             </span>
                             <small><?= (int)$blocks['description']['length'] ?> симв. · <?= (int)$blocks['description']['score'] ?>/20</small>
                         </td>
-                        <td data-label="Характеристики">
+                        <td data-label="Характеристики" class="seo-audit__characteristics">
                             <span class="seo-check <?= $blocks['characteristics']['count'] >= 3 ? 'is-filled' : 'is-partial' ?>">
                                 <?= (int)$blocks['characteristics']['count'] ?> из 3+
                             </span>
                             <small><?= (int)$blocks['characteristics']['score'] ?>/20</small>
+                            <?php if ($characteristicDetails !== []): ?>
+                                <ul class="seo-audit__characteristic-list">
+                                    <?php foreach ($characteristicDetails as $characteristic): ?>
+                                        <li><strong><?= htmlspecialcharsbx($characteristic['NAME']) ?>:</strong> <?= htmlspecialcharsbx($characteristic['VALUE']) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
                         </td>
                         <td data-label="Фото">
                             <span class="seo-check <?= $blocks['photo']['score'] === 20 ? 'is-filled' : ($blocks['photo']['filled'] ? 'is-partial' : 'is-empty') ?>">

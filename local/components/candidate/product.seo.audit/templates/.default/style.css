@@ -370,6 +370,24 @@
     min-width: 235px;
 }
 
+.seo-audit__characteristics {
+    min-width: 190px;
+}
+
+.seo-audit__characteristic-list {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.45;
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+
+.seo-audit__characteristic-list strong {
+    color: #46536a;
+    font-weight: 700;
+}
+
 .seo-audit__product > a {
     color: var(--ink);
     font-size: 14px;
@@ -639,6 +657,7 @@
     }
 
     .seo-audit__product,
+    .seo-audit__characteristics,
     .seo-audit__score {
         min-width: 0;
     }

@@ -89,6 +89,7 @@ if ($this->StartResultCache($cacheTime, $cacheId)) {
 
     foreach ($products as $productId => $product) {
         $characteristics = [];
+        $characteristicDetails = [];
         foreach ($characteristicCodes as $code) {
             $property = $propertyValues[$productId][$code] ?? null;
             if (!$property) {
@@ -97,7 +98,13 @@ if ($this->StartResultCache($cacheTime, $cacheId)) {
             $values = is_array($property['VALUE'] ?? null) ? $property['VALUE'] : [$property['VALUE'] ?? null];
             foreach ($values as $value) {
                 if (is_scalar($value) && trim((string)$value) !== '') {
-                    $characteristics[$code] = trim((string)$value);
+                    $displayValue = trim((string)$value);
+                    $characteristics[$code] = $displayValue;
+                    $characteristicDetails[] = [
+                        'CODE' => $code,
+                        'NAME' => trim((string)($property['NAME'] ?? '')) ?: $code,
+                        'VALUE' => $displayValue,
+                    ];
                     break;
                 }
             }
@@ -119,6 +126,7 @@ if ($this->StartResultCache($cacheTime, $cacheId)) {
             'NAME' => $product['NAME'],
             'DETAIL_PAGE_URL' => $product['DETAIL_PAGE_URL'],
             'CHARACTERISTICS' => $characteristics,
+            'CHARACTERISTIC_DETAILS' => $characteristicDetails,
             'META_TITLE' => (string)($inherited['ELEMENT_META_TITLE'] ?? ''),
             'META_DESCRIPTION' => (string)($inherited['ELEMENT_META_DESCRIPTION'] ?? ''),
             'AUDIT' => $audit,
@@ -159,4 +167,3 @@ if ($this->StartResultCache($cacheTime, $cacheId)) {
 
     $this->IncludeComponentTemplate();
 }
-
