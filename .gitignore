@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+vendor/
+www/
+screenshots/*.tmp.png
+*.log
+*.sql
+*.tar.gz
+

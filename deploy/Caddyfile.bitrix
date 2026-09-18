@@ -1,0 +1,13 @@
+bitrix.qryptoturtle.top {
+  encode zstd gzip
+  @hidden path_regexp hidden (^|/)\.
+  respond @hidden 404
+  reverse_proxy bitrix-web:80
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    -Server
+  }
+}
+
