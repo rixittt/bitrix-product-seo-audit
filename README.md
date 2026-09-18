@@ -14,6 +14,12 @@
 - кеширование с учётом параметров отчёта;
 - адаптивная таблица и конкретные рекомендации по каждому товару.
 
+## Скриншоты
+
+![Отчёт на большом экране](docs/screenshots/seo-report-desktop.png)
+
+![Критичные товары на мобильном экране](docs/screenshots/seo-report-mobile.png)
+
 ## Структура
 
 - `local/components/candidate/product.seo.audit` — компонент и шаблон;
