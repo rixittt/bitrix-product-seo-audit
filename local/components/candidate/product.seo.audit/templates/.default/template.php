@@ -7,16 +7,23 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
 /** @var array $arResult */
 $summary = $arResult['SUMMARY'];
 ?>
+<script>document.body.classList.add('seo-audit-page');</script>
 <section class="seo-audit" aria-labelledby="seo-audit-title">
     <div class="seo-audit__hero">
-        <div>
-            <p class="seo-audit__eyebrow">Контроль качества каталога</p>
+        <div class="seo-audit__hero-copy">
+            <p class="seo-audit__eyebrow"><span></span> Демо-проект на 1С-Битрикс</p>
             <h1 id="seo-audit-title">SEO-готовность товаров</h1>
-            <p class="seo-audit__lead">Отчёт проверяет контент, характеристики, изображения и мета-данные каждого товара.</p>
+            <p class="seo-audit__lead">Единый экран контроля контента, характеристик, изображений и мета-данных каталога.</p>
+            <nav class="seo-audit__quick-links" aria-label="Разделы магазина">
+                <a href="/catalog/seo-audit-demo/">Открыть каталог <span aria-hidden="true">↗</span></a>
+                <a href="/">На витрину</a>
+            </nav>
         </div>
-        <div class="seo-audit__average" aria-label="Средняя оценка">
-            <strong><?= (int)$summary['average'] ?>%</strong>
-            <span>средняя оценка</span>
+        <div class="seo-audit__average" style="--average: <?= (int)$summary['average'] ?>" aria-label="Средняя оценка <?= (int)$summary['average'] ?> процентов">
+            <div class="seo-audit__average-ring">
+                <strong><?= (int)$summary['average'] ?>%</strong>
+            </div>
+            <span>средняя готовность</span>
         </div>
     </div>
 
@@ -123,4 +130,3 @@ $summary = $arResult['SUMMARY'];
 
     <p class="seo-audit__note">Оценка носит диагностический характер: по 20 баллов дают описание, характеристики, фотографии, meta title и meta description.</p>
 </section>
-
